@@ -44,7 +44,6 @@ gradlePlugin {
             description = "Dokka, the Kotlin documentation tool"
             implementationClass = "org.jetbrains.dokka.gradle.DokkaPlugin"
             version = dokkaVersion
-            isAutomatedPublishing = false // This will probably have to be fixed for Gradle Plugin Portal release
         }
     }
 }
@@ -67,6 +66,11 @@ publishing {
             from(components["java"])
             version = "for-integration-tests-SNAPSHOT"
         }
+
+        register<MavenPublication>("pluginMaven") {
+            configurePom("Dokka ${project.name}")
+            artifactId = "dokka-gradle-plugin"
+        }
     }
 }
 
@@ -74,6 +78,6 @@ tasks.withType<PublishToMavenRepository>().configureEach {
     onlyIf { publication != publishing.publications["dokkaGradlePluginForIntegrationTests"] }
 }
 
-registerDokkaArtifactPublication("dokkaGradleMavenPlugin") {
-    artifactId = "dokka-gradle-plugin"
-}
+configureBintrayPublicationIfNecessary("pluginMaven", "dokkaGradlePluginPluginMarkerMaven")
+configureSpacePublicationIfNecessary("pluginMaven", "dokkaGradlePluginPluginMarkerMaven")
+configureSonatypePublicationIfNecessary("pluginMaven", "dokkaGradlePluginPluginMarkerMaven")

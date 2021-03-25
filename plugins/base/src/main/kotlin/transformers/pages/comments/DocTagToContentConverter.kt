@@ -145,7 +145,7 @@ open class DocTagToContentConverter : CommentsToContentConverter {
                     docTag.body,
                     dci,
                     sourceSets.toDisplaySourceSets(),
-                    styles
+                    styles + setOf(ContentStyle.Html).takeIf { docTag.params["content-type"] == "html" }.orEmpty()
                 )
             )
             is Strikethrough -> buildChildren(docTag, setOf(TextStyle.Strikethrough))
@@ -205,6 +205,14 @@ open class DocTagToContentConverter : CommentsToContentConverter {
                 )
             )
 
+            is Html -> listOf(
+                ContentGroup(
+                    buildChildren(docTag),
+                    dci,
+                    sourceSets.toDisplaySourceSets(),
+                    styles + ContentStyle.Html
+                )
+            )
             is CustomDocTag -> if (docTag.isNonemptyFile()) {
                 listOf(
                     ContentGroup(

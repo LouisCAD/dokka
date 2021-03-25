@@ -707,6 +707,9 @@ open class HtmlRenderer(
 
     override fun FlowContent.buildText(textNode: ContentText) =
         when {
+            textNode.hasStyle(ContentStyle.Html) -> {
+                consumer.onTagContentUnsafe { raw(textNode.text) }
+            }
             textNode.hasStyle(TextStyle.Indented) -> {
                 consumer.onTagContentEntity(Entities.nbsp)
                 text(textNode.text)
